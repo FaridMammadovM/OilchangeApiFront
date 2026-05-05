@@ -1,0 +1,1 @@
+export const pageSizes = [100, 150, 200];
