@@ -1,17 +1,17 @@
 import { Input } from '@/components/ui/input';
 import { formatLicensePlate } from '@/lib/utils';
 import { getUsernameRole } from '@/services/customer.service';
-import { IFilterParams } from '@/types/oilChange.type';
+import { ICustomerFilters } from '@/types/customer.type';
 import { useQuery } from '@tanstack/react-query';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 type Props = {
-  filters: Partial<IFilterParams>
-  setFilters: Dispatch<SetStateAction<Partial<IFilterParams>>>
+  filters: Partial<ICustomerFilters>
+  setFilters: Dispatch<SetStateAction<Partial<ICustomerFilters>>>
 }
 
 const FilterToolbar = ({ setFilters }: Props) => {
-  const [debouncedFilters, setDebouncedFilters] = useState<Partial<IFilterParams>>({
+  const [debouncedFilters, setDebouncedFilters] = useState<Partial<ICustomerFilters>>({
     name: '',
     surname: '',
     carNumber: '',
@@ -34,7 +34,11 @@ const FilterToolbar = ({ setFilters }: Props) => {
 
   useEffect(() => {
     const delayInputTimeoutId = setTimeout(() => {
-      setFilters(debouncedFilters);
+      setFilters((prev) => ({
+        ...prev,
+        ...debouncedFilters,
+        pageIndex: 1,
+      }))
     }, 500);
     return () => clearTimeout(delayInputTimeoutId);
   }, [debouncedFilters, setFilters]);

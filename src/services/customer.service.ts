@@ -1,13 +1,30 @@
 import { Customer } from "@/features/customers/data/schema";
 import { IAuthResponse, IUser } from "@/types/auth.type";
 import { ResponseType, TApi } from "@/types/common.type";
-import { IOTPBody } from "@/types/customer.type";
-import { IFilterParams } from "@/types/oilChange.type";
+import {
+  ICustomerApiFilters,
+  ICustomerFilters,
+  IGetCustomersV2Response,
+  IOTPBody,
+} from "@/types/customer.type";
 import request from "@/utils/axios";
 
-export const getCustomers = async (params: Partial<IFilterParams>) => {
-  const res = await request.get('/customers/getCustomers', { params })
-  return res.data.data as Customer[]
+const mapCustomerFiltersToApiParams = (
+  filters: Partial<ICustomerFilters>
+): ICustomerApiFilters => ({
+  PageIndex: filters.pageIndex ?? 1,
+  PageCount: filters.pageCount ?? 100,
+  CarNumber: filters.carNumber?.trim() || undefined,
+  Name: filters.name?.trim() || undefined,
+  Surname: filters.surname?.trim() || undefined,
+  Phone: filters.phone?.trim() || undefined,
+  SortByDateAscending: filters.sortByDateAscending ?? false,
+})
+
+export const getCustomers = async (params: Partial<ICustomerFilters>) => {
+  const apiParams = mapCustomerFiltersToApiParams(params)
+  const res = await request.get('/customers/GetCustomersV2', { params: apiParams })
+  return res.data.data as IGetCustomersV2Response<Customer>
 }
 
 export const getCustomerById = async (phone: string) => {

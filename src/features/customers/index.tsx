@@ -18,34 +18,43 @@ import { useQuery } from '@tanstack/react-query'
 import { getCustomers } from '@/services/customer.service'
 import { CustomersPasswordDialog } from './components/customers-password-dialog'
 import FilterToolbar from './components/filter-toolbar'
-import { IFilterParams } from '@/types/oilChange.type'
+import { CustomersPagination } from './components/customers-pagination'
+import { ICustomerFilters } from '@/types/customer.type'
 
 export default function Customers() {
   // Dialog states
   const [currentRow, setCurrentRow] = useState<Customer | null>(null)
   const [open, setOpen] = useDialogState<CustomersDialogType>(null)
-  const [filters, setFilters] = useState<Partial<IFilterParams>>({
+  const [filters, setFilters] = useState<Partial<ICustomerFilters>>({
     name: '',
     surname: '',
     carNumber: '',
     phone: '',
-  });
-  const { isPending, isError, data: customers = [], error } = useQuery({
+    pageIndex: 1,
+    pageCount: 100,
+    sortByDateAscending: false,
+  })
+  const { isPending, isError, data, error } = useQuery({
     queryKey: ['customers', filters],
     queryFn: () => getCustomers(filters),
   })
+  const customers = data?.items ?? []
+  const totalCount = data?.totalCount ?? 0
+  const pageIndex = filters.pageIndex ?? 1
+  const pageSize = filters.pageCount ?? 100
 
   // Parse user list
   // const userList = userListSchema.parse(Customers)
 
   const renderTable = (customers: Customer[]) => {
-    if (isPending) {
-      return <span>Yüklənir...</span>
-    }
-
     if (isError) {
       return <span>Xəta: {error.message}</span>
     }
+
+    if (isPending && customers.length === 0) {
+      return <span>Yüklənir...</span>
+    }
+
     return <CustomersTable data={customers} columns={columns} />
   }
 
@@ -73,6 +82,19 @@ export default function Customers() {
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1'>
           <FilterToolbar filters={filters} setFilters={setFilters} />
           {renderTable(customers)}
+          {!isPending && !isError && (
+            <CustomersPagination
+              pageIndex={pageIndex}
+              pageCount={pageSize}
+              totalCount={totalCount}
+              onPageChange={(page) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  pageIndex: page,
+                }))
+              }
+            />
+          )}
         </div>
       </Main>
 

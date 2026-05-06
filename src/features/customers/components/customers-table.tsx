@@ -10,7 +10,6 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
@@ -24,7 +23,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Customer } from '../data/schema'
-import { DataTablePagination } from './data-table-pagination'
 import { useQuery } from '@tanstack/react-query'
 import { getUsernameRole } from '@/services/customer.service'
 // import { DataTableToolbar } from './data-table-toolbar'
@@ -46,10 +44,6 @@ export function CustomersTable({ columns, data }: DataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
-  const [pagination, setPagination] = useState({
-    pageSize: 100,
-    pageIndex: 0,
-  });
 
   const table = useReactTable({
     data,
@@ -59,7 +53,6 @@ export function CustomersTable({ columns, data }: DataTableProps) {
       columnVisibility,
       rowSelection,
       columnFilters,
-      pagination,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -68,8 +61,6 @@ export function CustomersTable({ columns, data }: DataTableProps) {
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -83,7 +74,7 @@ export function CustomersTable({ columns, data }: DataTableProps) {
   return (
     <div className='space-y-4'>
       {/* <DataTableToolbar table={table} /> */}
-      <div className='rounded-md border'>
+      <div className='rounded-md border overflow-auto' style={{ maxHeight: 'calc(100vh - 280px)' }}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -151,7 +142,6 @@ export function CustomersTable({ columns, data }: DataTableProps) {
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
     </div>
   )
 }

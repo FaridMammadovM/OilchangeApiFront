@@ -69,7 +69,11 @@ const FilterToolbar = ({ setFilters }: Props) => {
 
   useEffect(() => {
     const delayInputTimeoutId = setTimeout(() => {
-      setFilters(debouncedFilters);
+      setFilters((prev) => ({
+        ...prev,
+        ...debouncedFilters,
+        pageIndex: 1,
+      }))
     }, 500);
     return () => clearTimeout(delayInputTimeoutId);
   }, [debouncedFilters, setFilters]);
