@@ -47,7 +47,10 @@ export function CustomersPagination({
   const isLast = pageIndex >= totalPages
 
   return (
-    <div className='mt-4 flex items-center justify-center overflow-auto px-2 py-2'>
+    <div className='mt-4 flex items-center justify-between overflow-auto px-2 py-2'>
+      <span className='text-sm text-muted-foreground'>
+        Cəmi: <span className='font-medium text-foreground'>{totalCount}</span> müştəri
+      </span>
       <div className='flex items-center gap-2'>
         <Button
           variant='outline'
