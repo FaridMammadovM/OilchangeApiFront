@@ -1,5 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
+import { getUsernameRole } from '@/services/customer.service'
 
 interface CustomersPaginationProps {
   pageIndex: number
@@ -41,6 +43,10 @@ export function CustomersPagination({
   totalCount,
   onPageChange,
 }: CustomersPaginationProps) {
+   const { data: userRole } = useQuery({
+     queryKey: ['UsernameRole'],
+     queryFn: getUsernameRole})
+ 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageCount))
   const pageItems = getPageItems(pageIndex, totalPages)
   const isFirst = pageIndex <= 1
@@ -48,10 +54,12 @@ export function CustomersPagination({
 
   return (
     <div className='mt-4 flex items-center justify-between overflow-auto px-2 py-2'>
-      <span className='text-sm text-muted-foreground'>
-        Cəmi: <span className='font-medium text-foreground'>{totalCount}</span> müştəri
-      </span>
-      <div className='flex items-center gap-2'>
+      {userRole === 2 && (
+        <span className='text-sm text-muted-foreground'>
+          Cəmi: <span className='font-medium text-foreground'>{totalCount}</span> müştəri
+        </span>
+      )}
+      <div className='ml-auto flex items-center gap-2'>
         <Button
           variant='outline'
           className='h-8 w-8 p-0'

@@ -87,6 +87,7 @@ export default function Customers() {
               pageIndex={pageIndex}
               pageCount={pageSize}
               totalCount={totalCount}
+
               onPageChange={(page) =>
                 setFilters((prev) => ({
                   ...prev,
